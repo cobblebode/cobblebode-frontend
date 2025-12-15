@@ -1,0 +1,15 @@
+{
+  "name": "cobblemon-delivery-worker",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Automatic delivery system for Cobblemon shop orders",
+  "main": "auto-delivery.mjs",
+  "scripts": {
+    "start": "node auto-delivery.mjs"
+  },
+  "dependencies": {
+    "rcon-client": "^4.2.4",
+    "dotenv": "^16.4.5",
+    "@libsql/client": "^0.14.0"
+  }
+}

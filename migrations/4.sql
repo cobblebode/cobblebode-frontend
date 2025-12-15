@@ -1,0 +1,3 @@
+
+ALTER TABLE orders ADD COLUMN item_id INTEGER;
+ALTER TABLE orders ADD COLUMN order_type TEXT DEFAULT 'vip';
