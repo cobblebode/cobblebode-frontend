@@ -80,6 +80,34 @@ export default function Shop() {
   };
 
   /* =========================
+     CRIAÇÃO DO PAGAMENTO (PIX)
+     ========================= */
+  const handleCreatePayment = async () => {
+    if (!selectedItem || !playerName || !playerEmail) {
+      alert("Preencha nome e email");
+      return;
+    }
+
+    try {
+      setProcessingPayment(true);
+
+      const response = await api.post("/api/payments/create", {
+        productId: selectedItem.id,
+        productType: "shop", // ou "vip", dependendo do item
+        playerName,
+        playerEmail,
+      });
+
+      setPayment(response.data);
+    } catch (error) {
+      console.error("Erro ao criar pagamento:", error);
+      alert("Erro ao criar pagamento PIX");
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
+  /* =========================
      LOADING
      ========================= */
   if (loading) {
@@ -91,7 +119,7 @@ export default function Shop() {
   }
 
   /* =========================
-     RENDER
+     RENDERIZAÇÃO DA LOJA
      ========================= */
   return (
     <div className="min-h-screen bg-slate-950">
@@ -146,6 +174,72 @@ export default function Shop() {
           )}
         </div>
       </section>
+
+      {/* MODAL DE CHECKOUT */}
+      {showCheckout && selectedItem && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="bg-slate-900 rounded-xl p-6 w-full max-w-md relative">
+            <button
+              onClick={() => setShowCheckout(false)}
+              className="absolute top-3 right-3 text-purple-300"
+            >
+              <X />
+            </button>
+
+            <h2 className="text-2xl font-bold text-purple-300 mb-4">
+              {selectedItem.name}
+            </h2>
+
+            {!payment ? (
+              <>
+                <input
+                  placeholder="Nome do jogador"
+                  value={playerName}
+                  onChange={(e) => setPlayerName(e.target.value)}
+                  className="w-full mb-3 p-3 rounded bg-slate-800 text-white"
+                />
+
+                <input
+                  placeholder="Email"
+                  value={playerEmail}
+                  onChange={(e) => setPlayerEmail(e.target.value)}
+                  className="w-full mb-4 p-3 rounded bg-slate-800 text-white"
+                />
+
+                <button
+                  onClick={handleCreatePayment}
+                  disabled={processingPayment}
+                  className="w-full py-3 bg-green-600 hover:bg-green-700 rounded-lg text-white font-bold flex items-center justify-center gap-2"
+                >
+                  {processingPayment ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <>
+                      <QrCode /> Pagar com PIX
+                    </>
+                  )}
+                </button>
+              </>
+            ) : (
+              <>
+                <img
+                  src={`data:image/png;base64,${payment.qrCode}`}
+                  alt="QR Code PIX"
+                  className="mx-auto mb-4"
+                />
+
+                <button
+                  onClick={handleCopyPix}
+                  className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-bold flex items-center justify-center gap-2"
+                >
+                  {copied ? <Check /> : <Copy />}
+                  {copied ? "Copiado!" : "Copiar PIX"}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
