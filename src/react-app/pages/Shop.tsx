@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
-import { motion } from "framer-motion";
 import { Key, Loader2, QrCode, Copy, Check, X } from "lucide-react";
 import Navbar from "@/react-app/components/Navbar";
 import Footer from "@/react-app/components/Footer";
@@ -25,19 +24,20 @@ interface PaymentResponse {
 export default function Shop() {
   const [items, setItems] = useState<ShopItem[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
 
   const [playerName, setPlayerName] = useState("");
   const [playerEmail, setPlayerEmail] = useState("");
+  const [quantity, setQuantity] = useState(1);
 
   const [payment, setPayment] = useState<PaymentResponse | null>(null);
   const [processingPayment, setProcessingPayment] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [checkingStatus, setCheckingStatus] = useState(false);
 
   /* =========================
-     CARREGAR ITENS DA API
+     CARREGAR ITENS
      ========================= */
   useEffect(() => {
     async function loadItems() {
@@ -56,12 +56,15 @@ export default function Shop() {
   }, []);
 
   /* =========================
-     FUNÇÕES AUXILIARES
+     FUNÇÕES
      ========================= */
   const handleBuyClick = (item: ShopItem) => {
     setSelectedItem(item);
-    setShowCheckout(true);
+    setQuantity(1);
+    setPlayerName("");
+    setPlayerEmail("");
     setPayment(null);
+    setShowCheckout(true);
   };
 
   const handleCopyPix = () => {
@@ -80,11 +83,11 @@ export default function Shop() {
   };
 
   /* =========================
-     CRIAÇÃO DO PAGAMENTO (PIX)
+     PAGAMENTO PIX
      ========================= */
   const handleCreatePayment = async () => {
-    if (!selectedItem || !playerName || !playerEmail) {
-      alert("Preencha nome e email");
+    if (!selectedItem || !playerName || !playerEmail || quantity < 1) {
+      alert("Preencha todos os campos corretamente");
       return;
     }
 
@@ -93,7 +96,8 @@ export default function Shop() {
 
       const response = await api.post("/api/payments/create", {
         productId: selectedItem.id,
-        productType: "shop", // ou "vip", dependendo do item
+        productType: "shop",
+        quantity,
         playerName,
         playerEmail,
       });
@@ -113,13 +117,13 @@ export default function Shop() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-blue-400" />
+        <Loader2 className="w-10 h-10 animate-spin text-purple-400" />
       </div>
     );
   }
 
   /* =========================
-     RENDERIZAÇÃO DA LOJA
+     RENDER
      ========================= */
   return (
     <div className="min-h-screen bg-slate-950">
@@ -127,18 +131,37 @@ export default function Shop() {
 
       <section className="pt-32 pb-20 px-4">
         <div className="container mx-auto">
-          <h1 className="text-5xl font-bold text-center mb-6 text-purple-300">
+          <h1 className="text-5xl font-bold text-center mb-3 text-purple-300">
             Loja de Itens
           </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <p className="text-center text-purple-300/80 mb-10">
+            Adquira chaves lendárias e tenha acesso aos pokémons mais raros
+          </p>
+
+          <div className="
+            grid
+            grid-cols-1
+            sm:grid-cols-2
+            lg:grid-cols-3
+            xl:grid-cols-4
+            gap-8
+          ">
             {items.map((item) => (
               <div
                 key={item.id}
-                className="bg-slate-900 border border-purple-500/30 rounded-xl p-6"
+                className="
+                  bg-gradient-to-b from-slate-900 to-slate-950
+                  border border-purple-500/30
+                  rounded-2xl
+                  p-6
+                  shadow-lg
+                  hover:scale-[1.02]
+                  transition
+                "
               >
                 <div
-                  className={`w-14 h-14 mb-4 rounded-xl bg-gradient-to-br ${getGenerationColor(
+                  className={`w-16 h-16 mb-4 rounded-xl bg-gradient-to-br ${getGenerationColor(
                     item.name
                   )} p-3`}
                 >
@@ -159,7 +182,7 @@ export default function Shop() {
 
                 <button
                   onClick={() => handleBuyClick(item)}
-                  className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-bold"
+                  className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-xl text-white font-bold"
                 >
                   Comprar
                 </button>
@@ -175,10 +198,10 @@ export default function Shop() {
         </div>
       </section>
 
-      {/* MODAL DE CHECKOUT */}
+      {/* CHECKOUT */}
       {showCheckout && selectedItem && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-          <div className="bg-slate-900 rounded-xl p-6 w-full max-w-md relative">
+          <div className="bg-slate-900 rounded-2xl p-6 w-full max-w-md relative">
             <button
               onClick={() => setShowCheckout(false)}
               className="absolute top-3 right-3 text-purple-300"
@@ -196,20 +219,33 @@ export default function Shop() {
                   placeholder="Nome do jogador"
                   value={playerName}
                   onChange={(e) => setPlayerName(e.target.value)}
-                  className="w-full mb-3 p-3 rounded bg-slate-800 text-white"
+                  className="w-full mb-3 p-3 rounded-lg bg-slate-800 text-white"
                 />
 
                 <input
                   placeholder="Email"
                   value={playerEmail}
                   onChange={(e) => setPlayerEmail(e.target.value)}
-                  className="w-full mb-4 p-3 rounded bg-slate-800 text-white"
+                  className="w-full mb-3 p-3 rounded-lg bg-slate-800 text-white"
                 />
+
+                <input
+                  type="number"
+                  min={1}
+                  value={quantity}
+                  onChange={(e) => setQuantity(Number(e.target.value))}
+                  className="w-full mb-4 p-3 rounded-lg bg-slate-800 text-white"
+                  placeholder="Quantidade"
+                />
+
+                <p className="text-green-400 font-bold mb-4">
+                  Total: R$ {(selectedItem.price * quantity).toFixed(2)}
+                </p>
 
                 <button
                   onClick={handleCreatePayment}
                   disabled={processingPayment}
-                  className="w-full py-3 bg-green-600 hover:bg-green-700 rounded-lg text-white font-bold flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-green-600 hover:bg-green-700 rounded-xl text-white font-bold flex items-center justify-center gap-2"
                 >
                   {processingPayment ? (
                     <Loader2 className="animate-spin" />
@@ -230,7 +266,7 @@ export default function Shop() {
 
                 <button
                   onClick={handleCopyPix}
-                  className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-bold flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-xl text-white font-bold flex items-center justify-center gap-2"
                 >
                   {copied ? <Check /> : <Copy />}
                   {copied ? "Copiado!" : "Copiar PIX"}
