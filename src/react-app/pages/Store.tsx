@@ -33,13 +33,10 @@ export default function Store() {
   const [payment, setPayment] = useState<PaymentResponse | null>(null);
   const [processing, setProcessing] = useState(false);
 
-  // ===============================
-  // CARREGAR VIPS
-  // ===============================
   useEffect(() => {
     async function loadVips() {
       try {
-        const res = await fetch("https://cobblebode-backend.onrender.com/api/vips");
+        const res = await fetch("https://cobblebode-backend.onrender.com/api/vip");
         const data = await res.json();
         setProducts(data);
       } catch (err) {
@@ -48,22 +45,15 @@ export default function Store() {
         setLoading(false);
       }
     }
-
     loadVips();
   }, []);
 
-  // ===============================
-  // ABRIR CHECKOUT
-  // ===============================
   function handleBuy(product: VIPProduct) {
     setSelectedProduct(product);
     setShowCheckout(true);
     setPayment(null);
   }
 
-  // ===============================
-  // GERAR PIX
-  // ===============================
   async function handleCheckout(e: React.FormEvent) {
     e.preventDefault();
     if (!selectedProduct) return;
@@ -71,21 +61,23 @@ export default function Store() {
     setProcessing(true);
 
     try {
-      const res = await fetch("http://localhost:3001/api/payments/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          productId: selectedProduct.id,
-          productType: "vip",
-          playerName,
-          playerEmail,
-        }),
-      });
+      const res = await fetch(
+        "https://cobblebode-backend.onrender.com/api/payments/create",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            productId: selectedProduct.id,
+            productType: "vip",
+            playerName,
+            playerEmail,
+          }),
+        }
+      );
 
       const data = await res.json();
       setPayment(data);
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert("Erro ao gerar PIX");
     } finally {
       setProcessing(false);
@@ -101,42 +93,68 @@ export default function Store() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-950 text-white">
       <Navbar />
 
       <div className="pt-32 pb-20 container mx-auto text-center">
-        <h1 className="text-5xl font-bold text-blue-400 mb-10">Loja VIP</h1>
+        <h1 className="text-5xl font-bold text-blue-400 mb-4">Loja VIP</h1>
+
+        <p className="text-blue-300 mb-6">
+          Adquira vantagens exclusivas e aproveite ao máximo sua experiência no
+          CobbleBode
+        </p>
+
+        <div className="inline-block mb-10 px-6 py-3 rounded border border-yellow-500 text-yellow-400 bg-yellow-500/10">
+          ⚠️ O jogador deve estar ONLINE no servidor para receber o VIP
+        </div>
 
         <div className="flex justify-center gap-8 flex-wrap">
-          {products.map((vip) => (
-            <div
-              key={vip.id}
-              className="bg-slate-900 border border-blue-500/30 rounded-xl p-6 w-80"
-            >
-              <h2 className="text-2xl font-bold text-blue-200">{vip.name}</h2>
-              <p className="text-blue-300/70 mt-2">{vip.description}</p>
+          {products.map((vip) => {
+            const features = vip.features.split("|");
 
-              <p className="text-green-400 text-3xl font-bold mt-4">
-                R$ {vip.price.toFixed(2)}
-              </p>
-
-              <button
-                onClick={() => handleBuy(vip)}
-                className="mt-6 w-full py-3 bg-blue-600 rounded text-white font-bold"
+            return (
+              <div
+                key={vip.id}
+                className="bg-slate-900 border border-blue-500/30 rounded-xl p-6 w-96 text-left"
               >
-                Comprar VIP
-              </button>
-            </div>
-          ))}
+                <h2 className="text-2xl font-bold text-blue-200 mb-1">
+                  {vip.name}
+                </h2>
+
+                <p className="text-blue-300/70 mb-4">{vip.description}</p>
+
+                <p className="text-green-400 text-3xl font-bold mb-4">
+                  R$ {vip.price.toFixed(2)}{" "}
+                  <span className="text-sm text-gray-400">
+                    /{vip.duration_days} dias
+                  </span>
+                </p>
+
+                <ul className="space-y-2 mb-6">
+                  {features.map((f, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span className="text-green-400">✔</span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  onClick={() => handleBuy(vip)}
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded font-bold text-center"
+                >
+                  Comprar Agora
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* ===============================
-          MODAL CHECKOUT
-      =============================== */}
+      {/* MODAL CHECKOUT */}
       {showCheckout && selectedProduct && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-          <div className="bg-slate-900 p-6 rounded-xl w-full max-w-md text-white">
+          <div className="bg-slate-900 p-6 rounded-xl w-full max-w-md">
             <h2 className="text-xl font-bold mb-4">
               {selectedProduct.name}
             </h2>
