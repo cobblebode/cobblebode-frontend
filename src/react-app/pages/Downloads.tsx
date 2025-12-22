@@ -160,51 +160,65 @@ export default function Downloads() {
                   <FileText className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-orange-100">
-                  Minecraft Pirata
+                  Minecraft Pirata (SKLauncher)
                 </h3>
               </div>
 
-              <div className="space-y-6 text-orange-200">
-                <div>
-                  <h4 className="font-bold text-lg mb-3 text-orange-100">Dependências Necessárias:</h4>
-                  
-                  <div className="space-y-4">
-                    <div className="bg-slate-900/50 rounded-lg p-4 border border-orange-500/20">
-                      <p className="font-semibold mb-2">📁 easy_npc.rar</p>
-                      <p className="text-orange-300/70 text-sm">
-                        Descompacte e coloque o conteúdo na pasta <code className="bg-slate-950/50 px-2 py-1 rounded text-orange-300">config</code>
-                      </p>
-                    </div>
-
-                    <div className="bg-slate-900/50 rounded-lg p-4 border border-orange-500/20">
-                      <p className="font-semibold mb-2">📦 allthemons + E19 Cobblemon Minimap Icons</p>
-                      <p className="text-orange-300/70 text-sm">
-                        Coloque na pasta <code className="bg-slate-950/50 px-2 py-1 rounded text-orange-300">resourcepacks</code>
-                      </p>
-                    </div>
-
-                    <div className="bg-slate-900/50 rounded-lg p-4 border border-orange-500/20">
-                      <p className="font-semibold mb-2">🔧 mods.rar</p>
-                      <p className="text-orange-300/70 text-sm">
-                        Descompacte e substitua a pasta <code className="bg-slate-950/50 px-2 py-1 rounded text-orange-300">mods</code> existente
-                      </p>
-                    </div>
+              <div className="space-y-4 text-orange-200">
+                {/* Step 1 */}
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-orange-400 font-bold">1</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-1">Baixar o SKLauncher</p>
+                    <p className="text-orange-300/70 text-sm">
+                      Faça o download do SKLauncher em{' '}
+                      <a
+                        href="https://skmedix.pl/downloads"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-orange-400 hover:text-orange-300 underline"
+                      >
+                        skmedix.pl/downloads
+                      </a>
+                    </p>
                   </div>
                 </div>
 
-                <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
-                  <p className="text-orange-300 text-sm flex items-start gap-2">
-                    <span className="text-orange-400 font-bold">⚠️</span>
-                    <span>
-                      Certifique-se de seguir todas as etapas na ordem correta para evitar problemas de compatibilidade.
-                    </span>
-                  </p>
+                {/* Step 2 */}
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-orange-400 font-bold">2</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-1">Instalar o Modpack</p>
+                    <p className="text-orange-300/70 text-sm">
+                      Baixe o arquivo{' '}
+                      <code className="bg-slate-900/50 px-2 py-1 rounded text-orange-300">
+                        CobbleBode1.1.0.mrpack
+                      </code>{' '}
+                      do link acima e importe para o SKLauncher.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 3 */}
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-orange-400 font-bold">3</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-1">Jogar!</p>
+                    <p className="text-orange-300/70 text-sm">
+                      Inicie o jogo pelo SKLauncher e conecte-se ao servidor usando o IP acima.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </motion.div>
 
-          {/* Help Section */}
+{/* Help Section */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -218,7 +232,7 @@ export default function Downloads() {
               Entre no nosso Discord para suporte e tire suas dúvidas com a comunidade!
             </p>
             <a
-              href="https://discord.gg/ZaqvDWB8jZ"
+              href="https://discord.gg/qkZdzWUfe9"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#5865F2] hover:bg-[#4752C4] rounded-lg font-bold text-white transition-colors"
