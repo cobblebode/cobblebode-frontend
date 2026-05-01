@@ -244,7 +244,7 @@ export default function Downloads() {
               comunidade!
             </p>
             <a
-              href="https://discord.gg/qkZdzWUfe9"
+              href="https://discord.gg/aHzVauWuNE"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#5865F2] hover:bg-[#4752C4] rounded-lg font-bold text-white transition-colors"
